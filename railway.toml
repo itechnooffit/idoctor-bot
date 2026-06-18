@@ -1,4 +1,2 @@
 [deploy]
 startCommand = "apache2-foreground"
-healthcheckPath = "/"
-healthcheckTimeout = 30
