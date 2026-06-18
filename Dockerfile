@@ -5,15 +5,17 @@ RUN apt-get update && apt-get install -y libcurl4-openssl-dev && \
 
 RUN a2enmod rewrite
 
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-
 COPY . /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html
 
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
-
-EXPOSE ${PORT}
+RUN echo "Listen \${PORT}" > /etc/apache2/ports.conf && \
+    echo '<VirtualHost *:${PORT}>\n\
+    DocumentRoot /var/www/html\n\
+    <Directory /var/www/html>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 CMD ["apache2-foreground"]
