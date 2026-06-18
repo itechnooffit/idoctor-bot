@@ -3,7 +3,8 @@ FROM php:8.1-apache
 RUN apt-get update && apt-get install -y libcurl4-openssl-dev && \
     docker-php-ext-install curl mysqli pdo pdo_mysql
 
-RUN a2enmod rewrite
+RUN a2dismod mpm_event mpm_worker 2>/dev/null || true && \
+    a2enmod mpm_prefork rewrite
 
 COPY . /var/www/html/
 
